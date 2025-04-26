@@ -13,18 +13,22 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh './mvnw package -X'
+                sh './mvnw clean package'
             }
         }
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                script {
+                    docker.build("${IMAGE_NAME}")
+                }
             }
         }
         stage('Docker Push') {
             steps {
-                withDockerRegistry([ credentialsId: 'dockerhub', url: '' ]) {
-                    sh 'docker push $IMAGE_NAME'
+                script {
+                    docker.withRegistry('', 'dockerhub') {
+                        docker.image("${IMAGE_NAME}").push()
+                    }
                 }
             }
         }
