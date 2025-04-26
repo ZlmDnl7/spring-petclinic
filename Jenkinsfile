@@ -14,7 +14,7 @@ pipeline {
         stage('Build') {
             agent {
                 docker { 
-                    image 'maven:3.5.0'  // Usando la versión de la práctica
+                    image 'maven:3.8.4'  // Usando la versión de la práctica
                     args '-v $HOME/.m2:/root/.m2'  // Cache de Maven
                 }
             }
