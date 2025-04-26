@@ -12,8 +12,8 @@ pipeline {
         stage('Build') {
             agent {
                 docker { 
-                    image 'maven:3.8.4'  // Usando la versión que ya funciona
-                    args '-v $HOME/.m2:/root/.m2'  // Cache para Maven
+                    image 'maven:3.8.4'
+                    args '-v $HOME/.m2:/root/.m2'
                 }
             }
             steps {
@@ -30,8 +30,8 @@ pipeline {
         stage('Docker Push') {
             steps {
                 script {
-                    docker.withRegistry('', 'dockerhub') {
-                        docker.image("${IMAGE_NAME}").push()
+                    docker.withRegistry('', 'dockerhub-credentials-id') {
+                        docker.image("${IMAGE_NAME}").push('latest')
                     }
                 }
             }
