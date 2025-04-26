@@ -1,20 +1,31 @@
 pipeline {
-    agent none
+    agent any
+
+    environment {
+        IMAGE_NAME = "daniarias7/spring-petclinic"
+    }
+
     stages {
-        stage('Maven Install') {
-            agent {
-                docker {
-                    image 'maven:3.8.4'
-                }
-            }
+        stage('Checkout') {
             steps {
-                sh 'mvn clean install'
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+                sh './mvnw package'
             }
         }
         stage('Docker Build') {
-            agent any
             steps {
-                sh 'docker build -t tu_usuario/spring-petclinic:latest .'
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                withDockerRegistry([ credentialsId: 'dockerhub', url: '' ]) {
+                    sh 'docker push $IMAGE_NAME'
+                }
             }
         }
     }
