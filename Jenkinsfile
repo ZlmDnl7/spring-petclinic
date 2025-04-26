@@ -13,10 +13,13 @@ pipeline {
         }
         stage('Build') {
             agent {
-                docker { image 'maven:3.8.6-jdk-17' } 
+                docker { 
+                    image 'maven:3.5.0'  // Usando la versión de la práctica
+                    args '-v $HOME/.m2:/root/.m2'  // Cache de Maven
+                }
             }
             steps {
-                sh './mvnw clean package'
+                sh 'mvn clean package'  // Cambiado de ./mvnw a mvn
             }
         }
         stage('Docker Build') {
