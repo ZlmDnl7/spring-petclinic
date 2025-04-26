@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Build') {
             agent {
-                docker { image 'maven:3.8.8-jdk-17' } 
+                docker { image 'maven:3.8.6-jdk-17' } 
             }
             steps {
                 sh './mvnw clean package'
