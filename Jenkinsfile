@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh './mvnw package'
+                sh './mvnw package -X'
             }
         }
         stage('Docker Build') {
