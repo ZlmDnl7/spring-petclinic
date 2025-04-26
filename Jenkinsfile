@@ -1,10 +1,8 @@
 pipeline {
     agent any
-
     environment {
         IMAGE_NAME = "daniarias7/spring-petclinic"
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -14,12 +12,12 @@ pipeline {
         stage('Build') {
             agent {
                 docker { 
-                    image 'maven:3.8.4'  // Usando la versión de la práctica
-                    args '-v $HOME/.m2:/root/.m2'  // Cache de Maven
+                    image 'maven:3.8.4'  // Usando la versión que ya funciona
+                    args '-v $HOME/.m2:/root/.m2'  // Cache para Maven
                 }
             }
             steps {
-                sh 'mvn clean package'  // Cambiado de ./mvnw a mvn
+                sh 'mvn clean package'
             }
         }
         stage('Docker Build') {
