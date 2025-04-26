@@ -1,8 +1,11 @@
 pipeline {
     agent any
+
     environment {
-        IMAGE_NAME = "daniarias7/spring-petclinic"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        DOCKER_IMAGE = "daniarias7/spring-petclinic"
     }
+
     stages {
         stage('Checkout') {
             steps {
@@ -10,29 +13,23 @@ pipeline {
             }
         }
         stage('Build') {
-            agent {
-                docker {
-                    image 'maven:3.8.4'
-                    args '-v $HOME/.m2:/root/.m2'
-                }
-            }
             steps {
-                sh 'mvn clean package'
+                script {
+                    docker.image('maven:3.8.4').inside("-v $WORKSPACE:/app -w /app") {
+                        sh 'mvn clean package -DskipTests'
+                    }
+                }
             }
         }
         stage('Docker Build') {
             steps {
-                script {
-                    docker.build("${IMAGE_NAME}")
-                }
+                sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
         stage('Docker Push') {
             steps {
-                script {
-                    docker.withRegistry('', 'dockerhub-credentials-id') {
-                        docker.image("${IMAGE_NAME}").push('latest')
-                    }
+                withDockerRegistry([credentialsId: 'dockerhub', url: '']) {
+                    sh 'docker push $DOCKER_IMAGE'
                 }
             }
         }
